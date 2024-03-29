@@ -53,9 +53,9 @@ public:
     sort_timer_lst();
     ~sort_timer_lst();
 
-    void add_timer(util_timer *timer);
-    void adjust_timer(util_timer *timer);
-    void del_timer(util_timer *timer);
+    void add_timer(util_timer *timer);          //加入新的定时器，在客户端接入的时候调用
+    void adjust_timer(util_timer *timer);       //调整定时器，在有新的读写请求时调用，证明客户端仍在活动
+    void del_timer(util_timer *timer);          //删除定时器，当超时时调用，或者出现错误时调用
     void tick();
 
 private:

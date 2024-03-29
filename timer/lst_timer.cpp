@@ -95,7 +95,7 @@ void sort_timer_lst::del_timer(util_timer *timer)
 }
 void sort_timer_lst::tick()
 {
-    if (!head)
+    if (!head)  //空链表，什么都不做
     {
         return;
     }
@@ -104,12 +104,12 @@ void sort_timer_lst::tick()
     util_timer *tmp = head;
     while (tmp)
     {
-        if (cur < tmp->expire)
+        if (cur < tmp->expire)  //直到处理到第一个超时的
         {
             break;
         }
-        tmp->cb_func(tmp->user_data);
-        head = tmp->next;
+        tmp->cb_func(tmp->user_data);   //找到超时的timer，执行销毁函数(1)注销epoll(2)销毁timer
+        head = tmp->next;               //续上链表
         if (head)
         {
             head->prev = NULL;
@@ -117,6 +117,7 @@ void sort_timer_lst::tick()
         delete tmp;
         tmp = head;
     }
+    //处理完所有超时的才结束
 }
 
 void sort_timer_lst::add_timer(util_timer *timer, util_timer *lst_head)
@@ -201,8 +202,8 @@ void Utils::addsig(int sig, void(handler)(int), bool restart)
 //定时处理任务，重新定时以不断触发SIGALRM信号
 void Utils::timer_handler()
 {
-    m_timer_lst.tick();
-    alarm(m_TIMESLOT);
+    m_timer_lst.tick(); //调用超时信号，进入处理函数
+    alarm(m_TIMESLOT);  //重启定时
 }
 
 void Utils::show_error(int connfd, const char *info)
